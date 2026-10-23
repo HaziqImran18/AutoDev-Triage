@@ -1,0 +1,22 @@
+{
+  "repo": "HaziqImran18/autodev-triage-sandbox",
+  "map": {
+    "keyerror-user": 6,
+    "distutils-312": 7,
+    "numpy-float": 8,
+    "pydantic-basesettings": 9,
+    "flask-app-context": 10,
+    "asyncio-running-loop": 11,
+    "node-fetch-esm": 12,
+    "openai-429-quota": 13,
+    "sqlite-locked": 14,
+    "pandas-dup-index": 15,
+    "control-feature-retry": 16,
+    "control-vague-slow": 17,
+    "heldout-json-datetime": 18,
+    "heldout-unicode-decode": 19,
+    "heldout-control-error-messages": 20,
+    "heldout-control-safari": 21,
+    "heldout-connection-reset": 22
+  }
+}

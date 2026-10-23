@@ -1,0 +1,101 @@
+{
+  "repo": "HaziqImran18/autodev-triage-sandbox",
+  "summary": {
+    "3_agent": {
+      "n": 2,
+      "root_cause_correct": 1.0,
+      "bug_issues_correct": 1.0,
+      "control_issues_correct": null,
+      "fix_reasonable": 1.0,
+      "invented_facts": 0.5,
+      "keyword_recall": 0.834,
+      "reports_with_bad_urls": 0.0,
+      "run_errors": 0.0,
+      "avg_latency_s": 21.7,
+      "avg_cost_usd": 0.00156
+    },
+    "single_llm": {
+      "n": 2,
+      "root_cause_correct": 1.0,
+      "bug_issues_correct": 1.0,
+      "control_issues_correct": null,
+      "fix_reasonable": 1.0,
+      "invented_facts": 0.5,
+      "keyword_recall": 0.5,
+      "reports_with_bad_urls": 1.0,
+      "run_errors": 0.0,
+      "avg_latency_s": 5.65,
+      "avg_cost_usd": 0.00022
+    }
+  },
+  "rows": [
+    {
+      "id": "numpy-float",
+      "system": "single_llm",
+      "type": "bug",
+      "correct": true,
+      "fix_ok": true,
+      "invented": true,
+      "kw_recall": 0.333,
+      "bad_urls": [
+        "https://numpy.org/doc/stable/release.html"
+      ],
+      "latency": 6.4,
+      "cost": 0.00021839999999999997,
+      "error": false,
+      "judge_reasoning": "The report correctly identifies the removal of `np.float` as the root cause and suggests using `float`, which aligns with the ground truth. However, it incorrectly states the removal occurred in version 1.26.4, which is unsupported by the issue details.",
+      "note": "",
+      "report": "## Summary\nThe issue reported is an `AttributeError` indicating that the module 'numpy' has no attribute 'float'. This error occurred after upgrading NumPy from version 1.21 to 1.26.4, which removed the deprecated alias `np.float`.\n\n## Likely Root Cause\nThe root cause of the error is the removal of the `np.float` alias in the newer version of NumPy. The `np.float` type was deprecated in earlier versions and has been completely removed in version 1.26.4, leading to the AttributeError when the code attempts to access it.\n\n## Evidence\nThe traceback provided in the issue shows that the error occurs in the `normalize` function when trying to create an array with `np.zeros(n, dtype=np.float)`. The error message clearly states that `np.float` is no longer available, confirming that the issue is due to the upgrade to a version of NumPy where this alias has been removed.\n\n## Suggested Fix\nTo resolve this issue, the code should be updated to use the built-in `float` type instead of `np.float`. The line in question should be modified as follows:\n```python\narr = np.zeros(n, dtype=float)\n```\nThis change will ensure compatibility with the latest version of NumPy.\n\n## References\n- Numpy Release Notes: https://numpy.org/doc/stable/release.html"
+    },
+    {
+      "id": "numpy-float",
+      "system": "3_agent",
+      "type": "bug",
+      "correct": true,
+      "fix_ok": true,
+      "invented": true,
+      "kw_recall": 0.667,
+      "bad_urls": [],
+      "latency": 22.3,
+      "cost": 0.00155475,
+      "error": false,
+      "judge_reasoning": "The report correctly identifies the root cause as the removal of the deprecated `np.float` in a newer version of NumPy, and suggests the correct fix of using `float` or `np.float64`. However, it incorrectly states that `np.float` was removed in version 1.26.4, which is unsupported by the ground truth.",
+      "note": "",
+      "report": "## Summary\nThe issue arises from an `AttributeError` in the code after upgrading NumPy to version 1.26.4. The code attempts to use `np.float`, which has been deprecated and is no longer available, leading to a crash.\n\n## Likely Root Cause\nThe root cause of the error is the use of `np.float`, which was deprecated in earlier versions of NumPy and removed in version 1.26.4. The code that previously worked now fails because it relies on this deprecated alias.\n\n## Evidence\n- The error traceback indicates that the code fails at the line where `np.float` is used to define the data type for a NumPy array.\n- Documentation and community discussions confirm that `np.float` was deprecated and recommend using the built-in `float` or `np.float64` instead ([Roboflow Community Help](https://discuss.roboflow.com/t/bytetracker-error-attributeerror-module-numpy-has-no-attribute-float/4851), [GeeksforGeeks](https://www.geeksforgeeks.org/python/how-to-fix-attributeerror-module-numpy-has-no-attribute-float-in-python)).\n\n## Suggested Fix\nTo resolve the issue, replace `np.float` with the built-in Python `float` or use `np.float64` if a NumPy scalar type is specifically required. This change will ensure compatibility with the latest version of NumPy.\n\n## References\n- [Roboflow Community Help](https://discuss.roboflow.com/t/bytetracker-error-attributeerror-module-numpy-has-no-attribute-float/4851)\n- [GeeksforGeeks](https://www.geeksforgeeks.org/python/how-to-fix-attributeerror-module-numpy-has-no-attribute-float-in-python)"
+    },
+    {
+      "id": "node-fetch-esm",
+      "system": "single_llm",
+      "type": "bug",
+      "correct": true,
+      "fix_ok": true,
+      "invented": false,
+      "kw_recall": 0.667,
+      "bad_urls": [
+        "https://nodejs.org/api/esm.html"
+      ],
+      "latency": 4.9,
+      "cost": 0.00021644999999999998,
+      "error": false,
+      "judge_reasoning": "The report correctly identifies the root cause as the incompatibility of node-fetch v3 with CommonJS require(), and suggests appropriate fixes like using dynamic import() or converting to ESM, which align with the ground truth.",
+      "note": "",
+      "report": "## Summary\nThe server crashes on startup due to an error related to the use of the `node-fetch` library. The error message indicates that the CommonJS `require()` function is being used to import an ES Module, which is not supported.\n\n## Likely Root Cause\nThe root cause of the issue is the attempt to use `require()` to import `node-fetch`, which is an ES Module starting from version 3.x. This is incompatible with CommonJS modules, which leads to the `ERR_REQUIRE_ESM` error.\n\n## Evidence\nThe error message explicitly states: \n```\nError [ERR_REQUIRE_ESM]: require() of ES Module /app/node_modules/node-fetch/src/index.js from /app/server.js not supported.\n```\nThis indicates that the `require()` function is being used to import an ES Module, which is not allowed.\n\n## Suggested Fix\nTo resolve this issue, change the import statement in `/app/server.js` from `require()` to a dynamic `import()` statement. For example:\n```javascript\nconst fetch = await import('node-fetch');\n```\nAlternatively, if the project can be converted to use ES Modules, you could rename your files to `.mjs` or add `\"type\": \"module\"` in your `package.json`.\n\n## References\n- [Node.js Documentation on ES Modules](https://nodejs.org/api/esm.html)"
+    },
+    {
+      "id": "node-fetch-esm",
+      "system": "3_agent",
+      "type": "bug",
+      "correct": true,
+      "fix_ok": true,
+      "invented": false,
+      "kw_recall": 1.0,
+      "bad_urls": [],
+      "latency": 21.1,
+      "cost": 0.0015687000000000001,
+      "error": false,
+      "judge_reasoning": "The report correctly identifies the root cause as node-fetch v3 being ESM-only and suggests appropriate fixes, including using dynamic import or downgrading to node-fetch@2. No unsupported facts are presented.",
+      "note": "",
+      "report": "## Summary\nThe server crashes on startup due to an attempt to use `require()` to import the ES Module `node-fetch`, which is not supported in CommonJS environments. The error message suggests changing the `require` statement to a dynamic `import()` to resolve the issue.\n\n## Likely Root Cause\nThe `node-fetch` package has been converted to an ESM-only package starting from version 3.0.0, which means it cannot be imported using `require()` in CommonJS modules.\n\n## Evidence\nThe error message indicates that the server is trying to `require()` the `node-fetch` module, which results in the error `[ERR_REQUIRE_ESM]: require() of ES Module not supported`. This is consistent with the known behavior of `node-fetch` version 3 and above, as documented in various sources.\n\n## Suggested Fix\n1. **Use Dynamic Import**: Change your `require()` statement to a dynamic `import()`. For example:\n   ```javascript\n   const fetch = await import('node-fetch');\n   ```\n\n2. **Downgrade `node-fetch`**: If you prefer to continue using `require()`, downgrade to version `2.x` of `node-fetch`, which still supports CommonJS. You can do this by running:\n   ```bash\n   npm install node-fetch@2\n   ```\n\n## References\n- [SOLVED: ERR_REQUIRE_ESM: require() of ES Modules is not supported](https://codingbeautydev.com/blog/require-of-es-modules-is-not-supported)\n- [Error [ERR_REQUIRE_ESM]: require() of ES Module not supported](https://bobbyhadz.com/blog/javascript-error-err-require-esm-require-of-es-module-not-supported)\n- [Error: require() of ES modules is not supported when importing node-fetch](https://stackoverflow.com/questions/69041454/error-require-of-es-modules-is-not-supported-when-importing-node-fetch)"
+    }
+  ]
+}

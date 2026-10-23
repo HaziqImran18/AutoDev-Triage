@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}{{ s.repo }}#{{ s.issue_number }} · AutoDev-Triage{% endblock %}
+{% block content %}
+{% set d = s.diagnosis %}
+<section class="win wide">
+  <header class="titlebar"><i class="d r"></i><i class="d y"></i><i class="d g"></i><span>{{ s.repo }} · #{{ s.issue_number }}</span></header>
+  <div class="body">
+    <div class="head">
+      <div>
+        <h1>{{ s.issue.title if s.issue else s.repo ~ " #" ~ s.issue_number }}</h1>
+        <div class="muted">
+          {% if s.issue %}<a href="{{ s.issue.url }}" target="_blank" rel="noopener">{{ s.repo }}#{{ s.issue_number }}</a>
+          <span class="badge {{ s.issue.state }}">{{ s.issue.state }}</span>
+          {% for l in s.issue.labels %}<span class="chip">{{ l }}</span> {% endfor %}{% endif %}
+          · completed in {{ secs }}s
+        </div>
+      </div>
+      <a class="btn ghost" href="/">＋ New triage</a>
+    </div>
+
+    {% for e in s.errors %}<div class="alert err">{{ e }}</div>{% endfor %}
+    {% if s.github_comment_url %}<div class="alert ok">✅ Report posted to GitHub - <a href="{{ s.github_comment_url }}" target="_blank" rel="noopener">view comment</a></div>{% endif %}
+    {% if s.slack_sent %}<div class="alert ok">✅ Slack alert sent</div>{% endif %}
+
+    <div class="steps">
+      <div class="step {{ 'done' if d else 'fail' }}"><b>Diagnoser</b><span class="muted">{{ (s.stack_frames|length) ~ ' stack frames parsed' if s.stack_frames else 'Issue analysed' }}</span></div>
+      <div class="step {{ 'done' if s.research_attempts and s.findings.sources else ('fail' if d and s.research_attempts else '') }}"><b>Researcher</b><span class="muted">{{ s.findings.sources|length }} sources{% if s.research_attempts > 1 %} · retried{% endif %}</span></div>
+      <div class="step {{ 'done' if s.rca_report else ('fail' if d else '') }}"><b>Integrator</b><span class="muted">{{ 'Report written' if s.rca_report else 'No report' }}</span></div>
+    </div>
+
+    {% if d %}
+    <div class="card"><header><span>🩺</span><h2>Diagnosis</h2></header><div>
+      <p style="margin:0 0 12px">{{ d.summary }}</p>
+      <div class="grid">
+        {% if d.error_type %}<div class="kv"><small>Error type</small>{{ d.error_type }}</div>{% endif %}
+        {% if d.suspected_component %}<div class="kv"><small>Component</small>{{ d.suspected_component }}</div>{% endif %}
+        {% if d.library_involved %}<div class="kv"><small>Library</small>{{ d.library_involved }}{% if s.findings.package_info %} <span class="chip">latest {{ s.findings.package_info.latest_version }}</span>{% endif %}</div>{% endif %}
+      </div>
+      {% if s.stack_frames %}<pre>{% for f in s.stack_frames %}{{ f }}
+{% endfor %}</pre>{% endif %}
+    </div></div>
+    {% endif %}
+
+    {% for sec in sections %}
+    <div class="card {{ 'hl' if loop.index == 2 }}"><header><span>{{ sec.icon }}</span><h2>{{ sec.title }}</h2></header><div><div class="md">{{ sec.body }}</div></div></div>
+    {% endfor %}
+
+    {% if s.findings.sources %}
+    <div class="card"><header><span>🌐</span><h2>Sources found</h2><span class="chip">{{ s.findings.sources|length }}</span></header><div>
+      {% for src in s.findings.sources %}<a class="src" href="{{ src.url }}" target="_blank" rel="noopener">{{ src.title }}<br><small>{{ src.url.split('/')[2] if '//' in src.url else src.url }} - {{ src.snippet[:140] }}</small></a>{% endfor %}
+    </div></div>
+    {% endif %}
+
+    <details><summary>Agent trace</summary><pre>{% for t in s.trace %}{{ t }}
+{% endfor %}</pre></details>
+
+    {% if s.rca_report %}
+    <textarea id="raw" hidden>{{ s.rca_report }}</textarea>
+    <div class="actions"><button class="btn ghost" id="copy">Copy report</button><button class="btn ghost" id="download">Download .md</button></div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+{% endblock %}

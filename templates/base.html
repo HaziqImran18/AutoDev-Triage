@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}AutoDev-Triage{% endblock %}</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head><body>
+<div class="orb o1"></div><div class="orb o2"></div>
+<nav class="menubar"><b>🚀 AutoDev-Triage</b><span class="muted">Multi-Agent GitHub Triage</span><span class="sp"></span><span class="live">● Online</span><span id="clock"></span></nav>
+<main>{% block content %}{% endblock %}</main>
+{% block scripts %}{% endblock %}
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body></html>
